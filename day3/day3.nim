@@ -16,8 +16,7 @@ proc day3p2*(input: string): string =
         case mul
             of "do()": mul_enabled = true
             of "don't()": mul_enabled = false
-            else:
-                if mul_enabled:
-                    let (_, a, b) = mul.scanTuple("mul($i,$i)")
-                    total += a * b
+            elif mul_enabled:
+                let (_, a, b) = mul.scanTuple("mul($i,$i)")
+                total += a * b
     return $total
