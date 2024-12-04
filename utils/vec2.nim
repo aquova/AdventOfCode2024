@@ -6,7 +6,15 @@ type Vector2* = tuple
 type Point* = Vector2
 
 type Direction* = enum
-    NORTH, SOUTH, EAST, WEST
+    NORTH, SOUTH, EAST, WEST, NORTHWEST, SOUTHWEST, NORTHEAST, SOUTHEAST
+
+const ZERO*: Point = (0, 0)
+
+const FOURWAY = [NORTH, SOUTH, EAST, WEST]
+
+const CROSSWAY = [NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST]
+
+const EIGHTWAY = [NORTH, SOUTH, EAST, WEST, NORTHWEST, SOUTHWEST, NORTHEAST, SOUTHEAST]
 
 const LEFT* = {
     NORTH: WEST, WEST: SOUTH, SOUTH: EAST, EAST: NORTH
@@ -16,11 +24,10 @@ const RIGHT* = {
     NORTH: EAST, EAST: SOUTH, SOUTH: WEST, WEST: NORTH
 }.toTable
 
-const DELTA*: Table[Direction, Point] = {
-    NORTH: (0, -1), SOUTH: (0, 1), EAST: (1, 0), WEST: (-1, 0)
+const DELTA: Table[Direction, Point] = {
+    NORTH: (0, -1), SOUTH: (0, 1), EAST: (1, 0), WEST: (-1, 0),
+    NORTHWEST: (-1, -1), NORTHEAST: (1, -1), SOUTHEAST: (1, 1), SOUTHWEST: (-1, 1),
 }.toTable
-
-const ZERO*: Point = (0, 0)
 
 proc newPoint*(x, y: int): Point =
     result.x = x
@@ -53,9 +60,36 @@ proc `*`*(v: int, a: Point): Point =
 proc `*=`*(a: var Point, v: int) =
     a = a * v
 
+proc `[]`*[T](grid: seq[seq[T]], p: Point): T =
+    return grid[p.y][p.x]
+
+proc inBounds*[T](p: Point, grid: seq[seq[T]]): bool =
+    return p.x >= 0 and p.y >= 0 and p.y < grid.len() and p.x < grid[0].len()
+
 proc manhattan*(a: Point, b: Point): int =
     return abs(a.x - b.x) + abs(a.y - b.y)
 
+iterator delta*(p: Point): Vector2 =
+    for direction in FOURWAY:
+        yield DELTA[direction]
+
 iterator neighbors*(p: Point): Point =
-    for direction in Direction.items:
-        yield p + DELTA[direction]
+    for d in p.delta:
+        yield p + d
+
+iterator deltaEight*(p: Point): Vector2 =
+    for direction in EIGHTWAY:
+        yield DELTA[direction]
+
+iterator neighborsEight*(p: Point): Point =
+    for d in p.deltaEight:
+        yield p + d
+
+iterator deltaCross*(p: Point): Vector2 =
+    for direction in CROSSWAY:
+        yield DELTA[direction]
+
+iterator neighborsCross*(p: Point): Point =
+    for d in p.delta:
+        yield p + d
+
