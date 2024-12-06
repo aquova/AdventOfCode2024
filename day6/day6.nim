@@ -37,14 +37,14 @@ proc findVisited(puzzle: var Puzzle): seq[Point] =
 proc hasCycle(puzzle: var Puzzle): bool =
     var visited: seq[PosInfo]
     while true:
-        let info = (puzzle.pos, puzzle.facing)
-        if info in visited:
-            return true
-        visited.add(info)
         let next_p = puzzle.pos + getDelta(puzzle.facing)
         if not next_p.inBounds(puzzle.grid):
             return false
         if puzzle.grid[next_p]:
+            let info = (puzzle.pos, puzzle.facing)
+            if info in visited:
+                return true
+            visited.add(info)
             puzzle.facing = turnRight(puzzle.facing)
         else:
             puzzle.pos = next_p
