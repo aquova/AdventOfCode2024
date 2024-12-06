@@ -16,11 +16,11 @@ const CROSSWAY = [NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST]
 
 const EIGHTWAY = [NORTH, SOUTH, EAST, WEST, NORTHWEST, SOUTHWEST, NORTHEAST, SOUTHEAST]
 
-const LEFT* = {
+const LEFT = {
     NORTH: WEST, WEST: SOUTH, SOUTH: EAST, EAST: NORTH
 }.toTable
 
-const RIGHT* = {
+const RIGHT = {
     NORTH: EAST, EAST: SOUTH, SOUTH: WEST, WEST: NORTH
 }.toTable
 
@@ -62,6 +62,18 @@ proc `*=`*(a: var Point, v: int) =
 
 proc `[]`*[T](grid: seq[seq[T]], p: Point): T =
     return grid[p.y][p.x]
+
+proc `[]=`*[T](grid: var seq[seq[T]], p: Point, val: T) =
+    grid[p.y][p.x] = val
+
+proc getDelta*(d: Direction): Point =
+    DELTA[d]
+
+proc turnLeft*(d: Direction): Direction =
+    LEFT[d]
+
+proc turnRight*(d: Direction): Direction =
+    RIGHT[d]
 
 proc inBounds*[T](p: Point, grid: seq[seq[T]]): bool =
     return p.x >= 0 and p.y >= 0 and p.y < grid.len() and p.x < grid[0].len()
