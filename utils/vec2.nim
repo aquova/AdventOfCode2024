@@ -75,8 +75,11 @@ proc turnLeft*(d: Direction): Direction =
 proc turnRight*(d: Direction): Direction =
     RIGHT[d]
 
+proc inBounds*(p: Point, w: int, h: int): bool =
+    return p.x >= 0 and p.y >= 0 and p.y < h and p.x < w
+
 proc inBounds*[T](p: Point, grid: seq[seq[T]]): bool =
-    return p.x >= 0 and p.y >= 0 and p.y < grid.len() and p.x < grid[0].len()
+    return inBounds(p, grid.len(), grid[0].len())
 
 proc manhattan*(a: Point, b: Point): int =
     return abs(a.x - b.x) + abs(a.y - b.y)
