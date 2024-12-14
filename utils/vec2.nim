@@ -33,6 +33,9 @@ proc newPoint*(x, y: int): Point =
     result.x = x
     result.y = y
 
+proc newVec2*(x, y: int): Vector2 =
+    return newPoint(x, y)
+
 proc x*(p: Point): int {.inline.} =
     return p.x
 
