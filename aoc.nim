@@ -20,7 +20,7 @@ import day15/day15
 import day16/day16
 import day17/day17
 import day18/day18
-# import day19/day19
+import day19/day19
 # import day20/day20
 # import day21/day21
 # import day22/day22
@@ -47,7 +47,7 @@ const FUNCTION_TABLE = {
   "day16p1": DayProc(day16p1), "day16p2": DayProc(day16p2),
   "day17p1": DayProc(day17p1), "day17p2": DayProc(day17p2),
   "day18p1": DayProc(day18p1), "day18p2": DayProc(day18p2),
-  # "day19p1": DayProc(day19p1), "day19p2": DayProc(day19p2),
+  "day19p1": DayProc(day19p1), "day19p2": DayProc(day19p2),
   # "day20p1": DayProc(day20p1), "day20p2": DayProc(day20p2),
   # "day21p1": DayProc(day21p1), "day21p2": DayProc(day21p2),
   # "day22p1": DayProc(day22p1), "day22p2": DayProc(day22p2),
