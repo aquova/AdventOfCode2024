@@ -2,15 +2,15 @@ import os, strutils, tables
 
 type DayProc = proc(input: string): string
 
-import day1/day1
-import day2/day2
-import day3/day3
-import day4/day4
-import day5/day5
-import day6/day6
-import day7/day7
-import day8/day8
-import day9/day9
+import day01/day1
+import day02/day2
+import day03/day3
+import day04/day4
+import day05/day5
+import day06/day6
+import day07/day7
+import day08/day8
+import day09/day9
 import day10/day10
 import day11/day11
 import day12/day12
