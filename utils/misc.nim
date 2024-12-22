@@ -1,4 +1,10 @@
-import options
+import options, tables
+
+proc tableSequenceAdd*[T, U](tbl: var Table[T, seq[U]], key: T, val: U) =
+    if tbl.contains(key):
+        tbl[key].add(val)
+    else:
+        tbl[key] = @[val]
 
 # Finds the index of a variable in a sequence, if it exists
 proc find_index*[T](list: seq[T], v: T): Option[int] =
