@@ -1,4 +1,4 @@
-import algorithm, strutils, tables
+import algorithm, options, strutils, tables
 import ../utils/vec2
 
 const P1_NUM_ROBOTS = 2
@@ -20,18 +20,6 @@ proc `$`(chars: seq[char]): string =
     for c in chars:
         result &= c
 
-proc keepSmallest(tbl: var seq[string]) =
-    var output: seq[string]
-    var best = tbl[0].len()
-    for str in tbl:
-        let len = str.len()
-        if len == best:
-            output.add(str)
-        elif len < best:
-            best = len
-            output = @[str]
-    tbl = output
-
 proc isValid(arrows: seq[char], start, blank: Point): bool =
     const d = {'^': (0, -1), 'v': (0, 1), '<': (-1, 0), '>': (1, 0)}.toTable()
     var curr = start
@@ -41,9 +29,7 @@ proc isValid(arrows: seq[char], start, blank: Point): bool =
             return false
     return true
 
-proc getPermutations(start, stop, blank: Point, cache: var Table[(Point, Point), seq[string]]): seq[string] =
-    if cache.hasKey((start, stop)):
-        return cache[(start, stop)]
+proc getPermutations(start, stop, blank: Point, depth: int): seq[string] =
     let delta = stop - start
     let vertChar = if delta.y < 0: '^' else: 'v'
     let horzChar = if delta.x < 0: '<' else: '>'
@@ -61,44 +47,48 @@ proc getPermutations(start, stop, blank: Point, cache: var Table[(Point, Point),
             chars.add(horzChar)
     chars.sort()
     if chars.isValid(start, blank):
-        result.add($chars & "A")
+        result.add($chars & 'A')
     while chars.nextPermutation():
         if chars.isValid(start, blank):
-            result.add($chars & "A")
-    cache[(start, stop)] = result
+            result.add($chars & 'A')
 
-proc solve(lines: seq[string], tbl: Table[char, Point], blank: Point): seq[string] =
-    var cache: Table[(Point, Point), seq[string]]
-    for line in lines:
-        let input = 'A' & line
-        var possibilities = @[""]
-        for i in 0..input.len() - 2:
-            var next: seq[string]
-            let perms = getPermutations(tbl[input[i]], tbl[input[i + 1]], blank, cache)
-            for p in perms:
-                for po in possibilities:
-                    next.add(po & p)
-            possibilities = next
-        result.add(possibilities)
-    result.keepSmallest()
+proc solve(target: string, depth, maxDepth: int, cache: var Table[(Point, Point, int), int]): int =
+    let tbl = if depth == 0: NUMERIC_TABLE else: ARROW_TABLE # Hackkkkk
+    let input = 'A' & target
+    for i in 0..<input.len() - 1:
+        let ptA = tbl[input[i]]
+        let ptB = tbl[input[i + 1]]
+        if cache.contains((ptA, ptB, depth)):
+            result += cache[(ptA, ptB, depth)]
+            continue
+        let perms = getPermutations(ptA, ptB, tbl['X'], depth)
+        if depth == maxDepth:
+            let len = perms[0].len()
+            result += len
+            cache[(ptA, ptB, depth)] = len
+            continue
+        var best = none(int)
+        for p in perms:
+            let next = solve(p, depth + 1, maxDepth, cache)
+            if best.isNone() or next < best.get():
+                best = some(next)
+        cache[(ptA, ptB, depth)] = best.get()
+        result += best.get()
 
 proc day21p1*(input: string): string =
     var total = 0
     for line in input.splitLines():
-        var arrows = solve(@[line], NUMERIC_TABLE, NUMERIC_TABLE['X'])
-        for _ in countup(1, P1_NUM_ROBOTS):
-            arrows = solve(arrows, ARROW_TABLE, ARROW_TABLE['X'])
+        var cache: Table[(Point, Point, int), int]
+        let smallest = solve(line, 0, P1_NUM_ROBOTS, cache)
         let code = line[0..^2].parseInt()
-        total += code * arrows[0].len()
+        total += code * smallest
     return $total
 
 proc day21p2*(input: string): string =
     var total = 0
     for line in input.splitLines():
-        var arrows = solve(@[line], NUMERIC_TABLE, NUMERIC_TABLE['X'])
-        for _ in countup(1, P2_NUM_ROBOTS):
-            arrows = solve(arrows, ARROW_TABLE, ARROW_TABLE['X'])
-            echo(arrows[0].len())
+        var cache: Table[(Point, Point, int), int]
+        let smallest = solve(line, 0, P2_NUM_ROBOTS, cache)
         let code = line[0..^2].parseInt()
-        total += code * arrows[0].len()
+        total += code * smallest
     return $total
