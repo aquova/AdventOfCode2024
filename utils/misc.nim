@@ -17,3 +17,9 @@ proc `-`*[T](a: seq[T], b: seq[T]): seq[T] =
     for i in a:
         if i notin b:
             result.add(i)
+
+# Returns the intersection of sequence A and B
+proc `*`*[T](a, b: seq[T]): seq[T] =
+    for i in a:
+        if i in b:
+            result.add(i)
